@@ -33,9 +33,9 @@ namespace Paylike.NETStandard.Clients
         {
             return await Create(merchantId, cardId, descriptor, currency, amountAsMajor.ToMinorUnits(currency));
         }
-        public async Task<PaylikeApiResponse<Transaction>> Capture(string transactionId, int amount, string currency, string descriptor)
+        public async Task<PaylikeApiResponse<Transaction>> Capture(string transactionId, int amountAsMinor, string currency, string descriptor)
         {
-            var source = new { Amount = amount, Currency = currency, Descriptor = descriptor };
+            var source = new { Amount = amountAsMinor, Currency = currency, Descriptor = descriptor };
             return await _paylikeClient.MakePaylikeApiRequest<Transaction>($"transactions/{transactionId}/captures", source);
         }
         public async Task<PaylikeApiResponse<Transaction>> Capture(string transactionId, decimal amount, string currency, string descriptor)
@@ -56,6 +56,10 @@ namespace Paylike.NETStandard.Clients
         {
             return await Refund(transactionId, descriptor, amountAsMajor.ToMinorUnits(currency));
         }
-
+        public async Task<PaylikeApiResponse<Transaction>> Void(string transactionId, int amountAsMinor)
+        {
+            var source = new { amount = amountAsMinor };
+            return await _paylikeClient.MakePaylikeApiRequest<Transaction>($"transactions/{transactionId}/voids", source);
+        }
     }
 }
